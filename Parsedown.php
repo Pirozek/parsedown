@@ -515,10 +515,10 @@ class Parsedown
                 ),
             );
 
-            if($name === 'ol') 
+            if($name === 'ol')
             {
                 $listStart = stristr($matches[0], '.', true);
-                
+
                 if($listStart !== '1')
                 {
                     $Block['element']['attributes'] = array('start' => $listStart);
@@ -1044,7 +1044,11 @@ class Parsedown
                 $markup .= isset($Inline['markup']) ? $Inline['markup'] : $this->element($Inline['element']);
 
                 # remove the examined text
-                $text = substr($text, $Inline['position'] + $Inline['extent']);
+	            if(array_key_exists('extent', $Inline)) {
+		            $text = substr($text, $Inline['position'] + $Inline['extent']);
+	            } else {
+		            $text = substr($text, $Inline['position']);
+	            }
 
                 continue 2;
             }
@@ -1401,6 +1405,8 @@ class Parsedown
 
     protected function element(array $Element)
     {
+    	if(!array_key_exists('name', $Element)) return '';
+
         $markup = '<'.$Element['name'];
 
         if (isset($Element['attributes']))
